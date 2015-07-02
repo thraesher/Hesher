@@ -3,19 +3,29 @@ var hesher = hesher || {};
 
 hesher.Game = function() {};
 
+
 hesher.Game.prototype = {
 	create: function(){
 		
 		/////////////////////////////////////////////WorldAndBackground/////////////////////////////////////////
-		this.game.world.setBounds(0,0,window.innerWidth,window.innerHeight);
-		this.background = this.game.add.tileSprite(0,0, /*this.game.world.width, this.game.world.height*/900,500, 'rock');
-		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		//this.game.world.setBounds(0,0,window.innerWidth,window.innerHeight);
+		//this.background = this.game.add.tileSprite(0,0, this.game.world.width, this.game.world.height, 'rock');
+		this.map = this.game.add.tilemap('map');
+		this.map.addTilesetImage('mytilemap', 'gameTiles');
+
+		this.background = this.map.createLayer('background');
+    	this.blocklayer = this.map.createLayer('blocklayer');
+		this.map.setCollisionBetween(1, 100000, true, 'blocklayer');
+		this.background.resizeWorld();
 		
+		///////////////////////////////////////////////////////////////////////////////////////////////////////
+		this.scoreboard = 0;
 		/////////////////////////////////////////PlayerSetings///////////////////////////////////////////////
 		this.player = this.game.add.sprite(/*this.game.world.centerX, this.game.world.centerY*/200,200, 'hesher');
 		this.player.anchor.setTo(0.5,0.5)
 		this.player.inventar = [null];
 		this.player.hp = 1;
+		//this.player.scale.setTo(2);
 		this.player.maxHp = 3;
 		this.player.animations.add('up',[4,5],5, true);
 		this.player.animations.add('down',[1,2],5, true);
@@ -31,6 +41,7 @@ hesher.Game.prototype = {
 		this.player.lookingDown = false;
 		this.player.lookingRight = false;
 		this.player.lookingLeft = false;
+		this.player.score = 0;
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
 		///////////////////////////////////////ItemsSetting/////////////////////////////////////////////////
 		this.items = this.game.add.group();
@@ -41,8 +52,9 @@ hesher.Game.prototype = {
 		this.game.physics.arcade.enable(this.items);
 		this.collectedItem = false;
 		/////////////////////////////////////////////////////////////////////////////////////////////////////
-		
-		this.menu = this.game.add.image(100,600,'rock');
+		this.weaponSlot;
+		this.createHUD();
+	
 		
 		
 		
@@ -74,16 +86,18 @@ hesher.Game.prototype = {
 		this.enemies = this.add.group();
 		this.enemies.enableBody = true;
 		this.enemies.physicsBodyType = Phaser.Physics.ARCADE;
-		this.enemies.createMultiple(1,'dummy');
+		this.enemies.createMultiple(100,'zombie');
 		this.enemies.setAll('anchor.x',0.5);
 		this.enemies.setAll('anchor.y', 0.5);
 		this.enemies.setAll('outOfBoundsKill', true);
 		this.enemies.setAll('checkWorldBounds', true);
 		this.enemies.forEach(function(enemy){
-			enemy.animations.add('fly', [0,1],5,true);
+			enemy.animations.add('fly', [0],5,true);
 		});
 		this.nextEnemyAt = 0;
 		this.enemyDelay = 10;
+		this.enemies.score = 1;
+		this.enemies.dmg = 1;
 		/////////////////////////////////////////////////////////////////////////////////////////////////
 		this.bullets = [];
 		
@@ -120,7 +134,7 @@ hesher.Game.prototype = {
 		und führt die playerHit function aus.
 		*/
 		this.physics.arcade.overlap(this.player, this.enemies, this.playerHit, null, this);
-		
+		this.game.physics.arcade.collide(this.player, this.blocklayer);
 		/*
 		Überprüft Kollision zwischen dem Spieler und Waffenobjekten
 		und führt die collectWeapon function aus.
@@ -138,7 +152,7 @@ hesher.Game.prototype = {
 		
 		this.spawnEnemy();
 		this.spawnWeapon();
-		this.spawnSword();
+		//this.spawnSword();
 		
 		///////////////////////////////////////////////////////////////////////////////////////
 		
@@ -199,8 +213,9 @@ hesher.Game.prototype = {
 		enemy.kill();
 	},
 	playerHit: function(player, enemy){
+		this.scoreCalc(enemy);
 		enemy.kill();
-		player.hp = player.hp - 1;
+		player.hp = player.hp - this.enemies.dmg;
 		if(player.hp <= 0){
 			player.kill();
 		}
@@ -217,9 +232,9 @@ hesher.Game.prototype = {
 			
       		this.nextEnemyAt = this.time.now + this.enemyDelay;
 			var enemy = this.enemies.getFirstExists(false);
-      		enemy.reset(/*this.rnd.integerInRange(1,window.innerWidth)*/100,/*this.rnd.integerInRange(1,window.innerHeight)*/1);
+      		enemy.reset(/*this.rnd.integerInRange(,1)*/896,this.rnd.integerInRange(100,370));
       		//enemy.scale.setTo(this.rnd.integerInRange(3,6));
-      		enemy.body.velocity.y = this.rnd.integerInRange(30, 60);
+      		enemy.body.velocity.x -= this.rnd.integerInRange(10,20);
       		enemy.play('fly');
 			
     	}
@@ -242,24 +257,22 @@ hesher.Game.prototype = {
 		}
 	},
 	collectWeapon: function(player, weapon){
-		if(this.player.inventar[0] = null){
-			player.addChild(weapon);
+		//if(this.player.inventar[0] = null){
+			this.weaponSlot.addChild(weapon);
 			this.weaponEquiped = true;
 			this.player.inventar[0] = weapon;
-			this.player.inventar[0].x = 10;
-			this.player.inventar[0].y = 0;	
-			console.log(this.player.inventar[0].y);
-			console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				
+		/*	
 		}else {
 			//this.drop();
-			player.addChild(weapon);
-			this.weaponEquiped = true;
-			this.player.inventar[0] = weapon;
-			this.player.inventar[0].x = 10;
-			this.player.inventar[0].y = 0;	
-			console.log(this.player.inventar[0].y);
+			//player.addChild(weapon);
+			//this.weaponEquiped = true;
+			//this.player.inventar[0] = weapon;
+			//this.player.inventar[0].x = 10;
+			//this.player.inventar[0].y = 0;	
+			//console.log(this.player.inventar[0].y);
 		}
-		
+		*/
 	},
 	collectItem: function(player, items){
 		if(player.hp < player.maxHp){
@@ -313,49 +326,53 @@ hesher.Game.prototype = {
 			attackAnimation.anchor.setTo(0.5, 0.5);
 			attackAnimation.scale.setTo(2);
 			
-			attackAnimation.hitarea = new Phaser.Rectangle(+100, 0, 100, 100);
+			//attackAnimation.body.hitarea = new Phaser.Rectangle(0, 0, 100, 100);
 		  	this.physics.enable(attackAnimation, Phaser.Physics.ARCADE);
 			attackAnimation.animations.add('hit',[0,1,2,3,4],5,false);
 			attackAnimation.animations.play('hit',20,false, true);
 			this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				enemy.kill();
 				}, null, this);
+			this.game.debug.body(attackAnimation);
 			
 		}
 		else if(this.attackButton.justPressed(1)&& this.weaponEquiped == true && this.player.lookingLeft == true){
 			var attackAnimation = this.add.sprite(this.player.x -35 , this.player.y  ,'hitAnimationLeft');
 			attackAnimation.anchor.setTo(0.5, 0.5);
-			attackAnimation.scale.setTo(2);
+			//attackAnimation.scale.setTo(2);
 		  	this.physics.enable(attackAnimation, Phaser.Physics.ARCADE);
 			attackAnimation.animations.add('hit',[0,1,2,3,4],5,false);
 			attackAnimation.animations.play('hit',20,false, true);
 			this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				enemy.kill();
 				}, null, this);
+			this.game.debug.body(attackAnimation);
 		}
 		else if(this.attackButton.justPressed(1)&& this.weaponEquiped == true && this.player.lookingUp == true){
 			
 			var attackAnimation = this.add.sprite(this.player.x , this.player.y -30  ,'hitAnimationUp');
 			attackAnimation.anchor.setTo(0.5, 0.5);
-			attackAnimation.scale.setTo(2);
+			//attackAnimation.scale.setTo(2);
 		  	this.physics.enable(attackAnimation, Phaser.Physics.ARCADE);
 			attackAnimation.animations.add('hit',[0,1,2,3,4],3,false);
 			attackAnimation.animations.play('hit',20,false, true);
 			this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				enemy.kill();
 				}, null, this);
+			this.game.debug.body(attackAnimation);
 			
 		}
 		else if(this.attackButton.justPressed(1)&& this.weaponEquiped == true && this.player.lookingDown == true){
 			var attackAnimation = this.add.sprite(this.player.x , this.player.y +40 ,'hitAnimationDown');
 			attackAnimation.anchor.setTo(0.5, 0.5);
-			attackAnimation.scale.setTo(2);
+			//attackAnimation.scale.setTo(2);
 		  	this.physics.enable(attackAnimation, Phaser.Physics.ARCADE);
 			attackAnimation.animations.add('hit',[4,3,2,1,0],5,false);
 			attackAnimation.animations.play('hit',20,false, true);
 			this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				enemy.kill();
 				}, null, this);
+			this.game.debug.body(attackAnimation);
 			
 		}
 	},
@@ -381,19 +398,7 @@ hesher.Game.prototype = {
 		
 	},
 	walk: function(){
-		/*
-		if(this.walkUp.isUp && this.walkDown.isUp && this.walkLeft.isUp && this.walkRight.isUp){
-			this.player.animations.play('wait');
-			if(this.weaponEquiped){
-				this.player.inventar[0].x = -10;
-				this.player.inventar[0].y = -3;
-			}
-		}
-		
-		//sobald eine input gemacht wird (WASD) gelangt man in den else-Zweig
-		else{
-		
-		*/
+	
 		
 		/*
 		Beschreibt bei welcher Walktaste (WASD) welche Animations abgespielt wird.
@@ -406,20 +411,7 @@ hesher.Game.prototype = {
 				this.player.lookingDown = false;
 				this.player.lookingRight = false;
 				this.player.lookingLeft = false;
-				if(this.weaponEquiped){
-					this.player.inventar[0].x = 10;
-					this.player.inventar[0].y = -3;
-					console.log("updown");
-					// console.log(this.player.inventar[0].x);
-				}
-				if(this.walkUp.isUp){
-					this.player.animations.stop();
-					if(this.weaponEquiped){	
-						this.player.inventar[0].x = -10;
-						this.player.inventar[0].y = -3;
-						console.log("upup");
-					}
-				}
+				
 			
 			}
 			else if(this.walkDown.isDown){
@@ -429,19 +421,7 @@ hesher.Game.prototype = {
 				this.player.lookingDown = true;
 				this.player.lookingRight = false;
 				this.player.lookingLeft = false;
-				if(this.weaponEquiped){
-					this.player.inventar[0].x = -10;
-					this.player.inventar[0].y = -3;
-					
-				}
-				if(this.walkDown.isUp){
-					this.player.animations.stop();
-					if(this.weaponEquiped){	
-						this.player.inventar[0].x = -10;
-						this.player.inventar[0].y = -3;
-						
-					}
-				}
+				
 			}
 		
 			else if(this.walkRight.isDown){
@@ -450,18 +430,12 @@ hesher.Game.prototype = {
 				this.player.lookingDown = false;
 				this.player.lookingRight = true;
 				this.player.lookingLeft = false;
-				if(this.weaponEquiped){
-					this.player.inventar[0].x = 0;
-			    	this.player.inventar[0].y = 0;
-				}
+				
 				
 				this.player.animations.play('right');
 				if(this.walkRight.isUp){
 					this.player.animations.stop();
-					if(this.weaponEquiped){
-						this.player.inventar[0].x = -10;
-						this.player.inventar[0].y = -3;
-					}
+					
 				}
 			}
 			else if(this.walkLeft.isDown){
@@ -470,17 +444,11 @@ hesher.Game.prototype = {
 				this.player.lookingDown = false;
 				this.player.lookingRight = false;
 				this.player.lookingLeft = true;
-				if(this.weaponEquiped){
-					this.player.inventar[0].x = 0;
-			    	this.player.inventar[0].y = 0;
-				}
+				
 				this.player.animations.play('left');
 				if(this.walkLeft.isUp){
 				this.player.animations.stop();
-				if(this.weaponEquiped){
-					this.player.inventar[0].x = -10;
-					this.player.inventar[0].y = -3;
-				}
+				
 				}
 			
 		};
@@ -489,11 +457,17 @@ hesher.Game.prototype = {
 		
 		
 	},
-	menuBar: function(){
+	createHUD: function(){
+		
+		
+		this.weaponSlot = this.game.add.image(900,400,'menu');
+		this.weaponSlot.fixedToCamera = true;
 		
 		
 		
-		
+	},
+	scoreCalc: function(enemy){
+		this.player.score = this.player.score + enemy.score;
 	}
 	
 	
