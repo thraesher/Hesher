@@ -33,6 +33,11 @@ hesher.Preload.prototype = {
 		this.load.image('gameTiles', 'assets/images/mytilemap.jpg');
 		this.load.image('scoreDisplay','assets/images/scorehud.png');
 		this.load.spritesheet('gun','assets/images/gun.png',32,32);
+		this.load.spritesheet('forg','assets/images/forg.png',32,96);
+		this.load.spritesheet('forgAttackUp','assets/images/forgAttackUp.png',32,96);
+		this.load.spritesheet('forgAttackDown','assets/images/forgAttackDown.png',32,96);
+		this.load.spritesheet('forgAttackRight','assets/images/forgAttackRight.png',96,32);
+		this.load.spritesheet('forgAttackLeft','assets/images/forgAttackLeft.png',96,32);
 	},
 	create: function(){
 		this.state.start('Game');
