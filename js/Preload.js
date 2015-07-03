@@ -13,7 +13,8 @@ hesher.Preload.prototype = {
 		this.load.image('bulletLeft', 'assets/images/bullet_left.png');
 		this.load.image('bulletRight', 'assets/images/bullet_right.png');
 		this.load.image('hitUp', 'assets/images/sword.png');
-		this.load.image('menu','assets/images/weaponslot.png');
+		this.load.image('weaponSlot','assets/images/weaponslot.png');
+		this.load.image('gunSlot','assets/images/gunSlot.png');
 		this.load.spritesheet('playership', 'assets/images/player.png', 12, 12);
 		this.load.spritesheet('power', 'assets/images/power.png', 12, 12);
 		this.load.spritesheet('hesherWalkUp', 'assets/images/hesher_walk_up.png',16,16);
@@ -30,6 +31,8 @@ hesher.Preload.prototype = {
 		this.load.spritesheet('hitAnimationLeft','assets/images/baseballHitLeft.png',32,96);
 		this.load.tilemap('map', 'assets/tilemap/map.json', null, Phaser.Tilemap.TILED_JSON);
 		this.load.image('gameTiles', 'assets/images/mytilemap.jpg');
+		this.load.image('scoreDisplay','assets/images/scorehud.png');
+		this.load.spritesheet('gun','assets/images/gun.png',32,32);
 	},
 	create: function(){
 		this.state.start('Game');

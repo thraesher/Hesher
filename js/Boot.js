@@ -8,9 +8,9 @@ hesher.Boot.prototype = {
 		
 		//skalier optionen
 		this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-		this.scale.minWidth = 900;
+		this.scale.minWidth = 896;
 		this.scale.minHeight = 544;
-		this.scale.maxWidth = 900;
+		this.scale.maxWidth = 896;
 		this.scale.maxHeight = 544;
 		
 		this.scale.pageAlignHorizontally = true;
