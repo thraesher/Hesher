@@ -38,6 +38,7 @@ hesher.Preload.prototype = {
 		this.load.spritesheet('forgAttackDown','assets/images/forgAttackDown.png',32,96);
 		this.load.spritesheet('forgAttackRight','assets/images/forgAttackRight.png',96,32);
 		this.load.spritesheet('forgAttackLeft','assets/images/forgAttackLeft.png',96,32);
+		this.load.spritesheet('spit','assets/images/spit.png',16,16);
 	},
 	create: function(){
 		this.state.start('Game');
