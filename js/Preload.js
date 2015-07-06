@@ -39,6 +39,14 @@ hesher.Preload.prototype = {
 		this.load.spritesheet('forgAttackRight','assets/images/forgAttackRight.png',96,32);
 		this.load.spritesheet('forgAttackLeft','assets/images/forgAttackLeft.png',96,32);
 		this.load.spritesheet('spit','assets/images/spit.png',16,16);
+		this.load.audio('baseballSwing','assets/sounds/baseBallSwing.mp3');
+		this.load.audio('forgStab','assets/sounds/forgStab.mp3');
+		this.load.audio('gunReload','assets/sounds/gunReload.mp3');
+		this.load.audio('gunShot','assets/sounds/gunShot.mp3');
+		this.load.audio('zombieDies','assets/sounds/zombieDies.mp3');
+		this.load.audio('zombieMoan','assets/sounds/zombieMoan.mp3');
+		this.load.audio('track1','assets/sounds/track1.mp3');
+		this.load.audio('track2','assets/sounds/track2.mp3');
 	},
 	create: function(){
 		this.state.start('Game');

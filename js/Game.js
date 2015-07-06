@@ -12,7 +12,7 @@ hesher.Game.prototype = {
 		//this.background = this.game.add.tileSprite(0,0, this.game.world.width, this.game.world.height, 'rock');
 		this.worldCreate();
 		this.soundSetup();
-		
+		this.startPlayList();
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		/////////////////////////////////////////PlayerSetings///////////////////////////////////////////////
@@ -71,14 +71,13 @@ hesher.Game.prototype = {
 		///////////////////////EnemySpawn//////////////////////////////////////////////////////
 		
 		this.magCalc();
-		//this.spawnEnemy();
-		//this.spawnEnemyDown();
+		
 		this.spawnWeapon();
 		this.spawnSword();
 		this.zombieBehavior();
 		this.spawnHandler();
 		///////////////////////////////////////////////////////////////////////////////////////
-		
+		this.playListController();
 		/////////////////////////////FireDirection///////////////////////////////////////////////
 		
 		this.fireDirection();
@@ -107,6 +106,7 @@ hesher.Game.prototype = {
 		this.physics.enable(bullet, Phaser.Physics.ARCADE);
 		bullet.body.velocity.y = -500;
 		this.bullets.push(bullet);
+		this.playGunShot();
 		
 	},
 	fireDown: function(){
@@ -115,6 +115,7 @@ hesher.Game.prototype = {
 		this.physics.enable(bullet, Phaser.Physics.ARCADE);
 		bullet.body.velocity.y = +500;
 		this.bullets.push(bullet);
+		this.playGunShot();
 		
 	},
 	fireLeft: function(){
@@ -123,6 +124,7 @@ hesher.Game.prototype = {
 		this.physics.enable(bullet, Phaser.Physics.ARCADE);
 		bullet.body.velocity.x = -500;
 		this.bullets.push(bullet);
+		this.playGunShot();
 	},
 	fireRight: function(){
 		var bullet = this.add.sprite(this.player.x +20, this.player.y ,'bulletRight');
@@ -130,6 +132,7 @@ hesher.Game.prototype = {
 		this.physics.enable(bullet, Phaser.Physics.ARCADE);
 		bullet.body.velocity.x = +500;
 		this.bullets.push(bullet);
+		this.playGunShot();
 	},
 	spitDelay: function(){
 		while(this.time.now >this.betterZombies.spitDelay ){
@@ -401,6 +404,10 @@ hesher.Game.prototype = {
 		
 	},
 	collectItem: function(player, items){
+		console.log(this.playList[1].totalDuration);
+		
+	
+		
 		if(player.hp < player.maxHp){
 			
 			player.addChild(items);
@@ -503,11 +510,13 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 			
 				this.damageEnemy(enemy,this.weapons.dmg);
+				this.playBaseballSwing();
 					
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playBaseballSwing();
 		}, null, this);
 			//this.game.debug.body(attackAnimation);	
 			
@@ -522,11 +531,12 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.weapons.dmg);
-				
+			this.playBaseballSwing();	
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playBaseballSwing();
 		}, null, this);
 			//this.game.debug.body(attackAnimation);
 	},
@@ -540,10 +550,12 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.weapons.dmg);
+			this.playBaseballSwing();
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playBaseballSwing();
 		}, null, this);
 			//this.game.debug.body(attackAnimation);
 	},
@@ -557,10 +569,12 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.weapons.dmg);
+			this.playBaseballSwing();
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playBaseballSwing();
 		}, null, this);
 			//this.game.debug.body(attackAnimation);
 	},
@@ -574,10 +588,12 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		
 	},
@@ -591,10 +607,12 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		
 	},
@@ -608,10 +626,12 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		
 	},forgAttackRight: function(){
@@ -624,10 +644,12 @@ hesher.Game.prototype = {
 		this.physics.arcade.overlap(attackAnimation, this.enemies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		this.physics.arcade.overlap(attackAnimation, this.betterZombies, function(attackAnimation, enemy){
 				
 			this.damageEnemy(enemy,this.swords.dmg);
+			this.playForgStab();
 		}, null, this);
 		
 	},
@@ -732,8 +754,21 @@ hesher.Game.prototype = {
 		this.enemies.forEach( function(enemy) {
 			
 			var distance = this.physics.arcade.distanceBetween(enemy, this.player);
-        	this.physics.arcade.moveToObject(enemy, this.player, this.rnd.integerInRange(10,30));
+			/*
+			var posX = enemy.x;
+			var posY = enemy.y;
+			if(distance > 200){
+				if(posX == enemy.x && poxY == enemy.y){
+					posX = enemy.x + this.rnd.integerInRange(-50,50);
+					posY = enemy.y + this.rnd.integerInRange(-50,50);
+					this.physics.arcade.moveToXY(enemy, posX, posY, 10);
+				}
+			}
+			*/
 			
+			if(distance > 100 && distance < 200){
+        		this.physics.arcade.moveToObject(enemy, this.player, this.rnd.integerInRange(10,30));
+			}
 			if(distance < 100){
 				this.physics.arcade.moveToObject(enemy, this.player, 100);
 			}
@@ -765,6 +800,9 @@ hesher.Game.prototype = {
 				
 				this.spit(enemy);
 			}
+			if(distance <= 100){
+				this.playZombieMoan();
+			}
 			
 			
       	},this);
@@ -789,6 +827,8 @@ hesher.Game.prototype = {
 		enemy.damage(dmg);
 		if(!enemy.alive){
 			
+			
+			
 			var chang_ce = this.rnd.integerInRange(1,6)
 			if(chang_ce == 1 || chang_ce == 6){
 				this.spawnMag(enemy);
@@ -802,6 +842,7 @@ hesher.Game.prototype = {
 			magazin.kill();
 		
 			this.getRound();
+			this.playGunReload();
 		}
 	},
 	spawnMag: function(enemy){
@@ -935,14 +976,80 @@ hesher.Game.prototype = {
 
 	},
 	soundSetup: function(){
-		this.baseballSwing = this.game.add('baseballSwing');
-		this.forgStab = this.game.add('forgStab');
-		this.gunReload = this.game.add('gunReload');
-		this.gunShot = this.game.add('gunShot');
-		this.zombieDies = this.game.add('zombieDies');
-		this.zombieMoan = this.game.add('zombieMoan');
+		
+		this.playList = [];
+		this.playList[0] = this.game.add.audio('track1');
+		this.playList[1] = this.game.add.audio('track2');
+		
+		/*
+		this.playList[2] = this.game.add.audio('track3');
+		this.playList[3] = this.game.add.audio('track4');
+		this.playList[4] = this.game.add.audio('track5');
+		this.playList[5] = this.game.add.audio('track6');
+		*/
+		
+		this.playList[0].addMarker('cursor0',0,309);
+		this.playList[1].addMarker('cursor1',0,264);
+		
+		this.baseballSwing = this.game.add.audio('baseballSwing');
+		this.forgStab = this.game.add.audio('forgStab');
+		this.gunReload = this.game.add.audio('gunReload');
+		this.gunShot = this.game.add.audio('gunShot');
+		this.zombieDies = this.game.add.audio('zombieDies');
+		this.zombieMoan = this.game.add.audio('zombieMoan');
+		
+	},
+	playListController: function(){
+		
+		
+		this.playList[0].onMarkerComplete.addOnce(function(){
+			
+			this.playList[1].play('cursor1');
+		},this,9)	
+			
+			
+			
+		
+		/*
+		if(this.playList[1].totalDuration == this.playList[1].duration){
+			this.playList[2].play();
+		}
+		if(this.playList[2].totalDuration == this.playList[2].duration){
+			this.playList[3].play();
+		}
+		if(this.playList[3].totalDuration == this.playList[3].duration){
+			this.playList[4].play();
+		}
+		if(this.playList[4].totalDuration == this.playList[4].duration){
+			this.playList[5].play();
+		}
+		if(this.playList[5].totalDuration == this.playList[5].duration){
+			this.playList[0].play();
+		}
+		*/
+	},
+	startPlayList: function(){
+		
+		this.playList[0].play('cursor0');
+	},
+	playBaseballSwing: function(){
+		this.baseballSwing.play();
+	},
+	playForgStab: function(){
+		this.forgStab.play();
+	},
+	playGunReload: function(){
+		this.gunReload.play();
+	},
+	playGunShot: function(){
+		this.gunShot.play();
+	},
+	playZombieDies: function(){
+		this.zombieDies.play();
+	},
+	playZombieMoan: function(){
+		this.zombieMoan.play();
 	}
-
 	
 	
 };
