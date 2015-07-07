@@ -316,7 +316,8 @@ hesher.Game.prototype = {
       		//enemy.scale.setTo(this.rnd.integerInRange(3,6));
       		//enemy.body.velocity.x -= this.rnd.integerInRange(10,20);
       		enemy.play('fly');
-			
+			enemy.posX = enemy.x;
+			enemy.posY = enemy.y;
     	}
 		
 	},
@@ -754,17 +755,19 @@ hesher.Game.prototype = {
 		this.enemies.forEach( function(enemy) {
 			
 			var distance = this.physics.arcade.distanceBetween(enemy, this.player);
-			/*
-			var posX = enemy.x;
-			var posY = enemy.y;
+			
+			if(enemy.body.velocity.x == 0 && enemy.body.velocity.y == 0){
+				this.physics.arcade.moveToXY(enemy, this.rnd.integerInRange(1,896), this.rnd.integerInRange(1,544), 10);
+			}
+			
 			if(distance > 200){
-				if(posX == enemy.x && poxY == enemy.y){
-					posX = enemy.x + this.rnd.integerInRange(-50,50);
-					posY = enemy.y + this.rnd.integerInRange(-50,50);
-					this.physics.arcade.moveToXY(enemy, posX, posY, 10);
+				if(enemy.posX == enemy.x && enemy.poxY == enemy.y){
+					enemy.posX = enemy.x + this.rnd.integerInRange(-10,10);
+					enemy.posY = enemy.y + this.rnd.integerInRange(-10,10);
+					this.physics.arcade.moveToXY(enemy, enemy.posX, enemy.posY, 10);
 				}
 			}
-			*/
+			
 			
 			if(distance > 100 && distance < 200){
         		this.physics.arcade.moveToObject(enemy, this.player, this.rnd.integerInRange(10,30));
