@@ -4,6 +4,11 @@ var hesher = hesher || {};
 hesher.Boot = function(){};
 
 hesher.Boot.prototype = {
+	preload: function() {
+  	//assets we'll use in the loading screen
+    	
+   		this.load.image('loadingBarMenu', 'assets/images/loadingBar.png');
+  	},
 	create: function(){
 		
 		//skalier optionen
@@ -20,6 +25,7 @@ hesher.Boot.prototype = {
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 		//startet den preload der assets für das spiel
 		this.state.start('Preload');
+		
 	}
 	
 };
